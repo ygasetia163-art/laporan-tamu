@@ -1,0 +1,12 @@
+{
+  "name": "guest-complaint-portal",
+  "version": "1.0.0",
+  "description": "Room Service Complaint Reporter - Stitch Web App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["hotel", "room-service", "complaint", "stitch"],
+  "author": "",
+  "license": "ISC"
+}

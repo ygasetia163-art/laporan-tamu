@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Room Service - Buat Laporan</title>
+<!-- Tailwind CSS v3 with forms and container-queries plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style data-purpose="typography-and-base">
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @keyframes checkmarkStroke {
+      0% { stroke-dashoffset: 48; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .animate-check {
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: checkmarkStroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.2s forwards;
+    }
+    @keyframes modalPop {
+      0% { opacity: 0; transform: scale(0.85) translateY(20px); }
+      70% { transform: scale(1.03) translateY(-4px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-modal-pop {
+      animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toast-visible {
+      animation: fadeInUp 0.3s ease forwards;
+    }
+  </style>
+</head><body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
+<!-- BEGIN: MainHeader -->
+<header class="bg-white border-b border-slate-200/80 sticky top-0 z-30 px-4 py-3 flex items-center justify-between">
+<!-- Left: Brand Logo & Title -->
+<div class="flex items-center gap-2.5" data-purpose="brand-identity">
+<div class="w-9 h-9 bg-sky-500 rounded-lg flex items-center justify-center text-white shrink-0 shadow-sm shadow-sky-500/20">
+<!-- Service Bell Icon -->
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+<path d="M3 18h18M5 18a7 7 0 0114 0M12 7v4m-2-4h4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="leading-tight">
+<h1 class="text-sm font-bold tracking-tight text-slate-900">ROOM SERVICE</h1>
+<p class="text-[10px] text-slate-500 font-medium">Lapor &bull; Komplain Kamar</p>
+</div>
+</div>
+<!-- Right: User Profile Avatar -->
+<div class="flex items-center" data-purpose="user-profile">
+<img alt="Profil Tamu" class="w-9 h-9 rounded-full object-cover border border-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9OZehMSkYoHNVo4SdXpNOSvolPX_E-LdybeyDHb8JIDeLZGO-Ku-fhFzjn2kozDRA3ph1VnJ3eSqSrIxUCXWh9hOwmykgS_u7cuIobYFKgP8kFouGImuUmn88ZNn7Ki94gg4VqIGOsjDgZPXdrClisicQh7TtZWdAw3Bfwh2qgunCUkj86eRY6irky9PIw48qNzPsDHdnA24jt7aeCAAa_UtXYlqfI-DEM6hIC3JS9mr82V9J70vk"/>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 w-full max-w-md mx-auto px-4 pt-4 pb-8 flex flex-col gap-4">
+<!-- BEGIN: Compact Room Card & Switcher Button -->
+<section aria-label="Kamar Terpilih" class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative transition-all" data-purpose="compact-room-banner">
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-11 h-11 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-md shrink-0">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-base font-bold text-slate-900 tracking-tight" id="header-active-room">Room 12A</span>
+<span class="text-[10px] text-blue-700 font-semibold bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-full" id="header-room-type-badge">Superior AC</span>
+</div>
+<div class="flex items-center gap-1.5 mt-0.5">
+<p class="text-[11px] text-slate-500 font-medium truncate" id="header-room-desc">Kamar Mandi di Dalam</p>
+<span class="inline-block w-1 h-1 rounded-full bg-slate-300"></span>
+<span class="text-[10px] text-emerald-600 font-medium inline-flex items-center gap-0.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            Terverifikasi
+          </span>
+</div>
+</div>
+</div>
+<!-- Ganti Kamar Button -->
+<button class="shrink-0 inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-xl border border-slate-200 transition-all active:scale-95 shadow-sm" id="open-room-modal-btn" type="button">
+<span>Ganti</span>
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</section>
+<!-- END: Compact Room Card -->
+<!-- BEGIN: ReportHeader -->
+<section class="flex items-center justify-between" data-purpose="report-title-row">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 bg-sky-500 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md shadow-sky-500/20">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+<path d="M3 18h18M5 18a7 7 0 0114 0M12 7v4m-2-4h4" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<div>
+<p class="text-[10px] font-semibold tracking-wider text-slate-500 uppercase">LAYANAN KAMAR</p>
+<h2 class="text-xl font-bold text-slate-900 leading-tight">Buat Laporan</h2>
+</div>
+</div>
+<!-- Active Room Badge -->
+<span class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full" id="active-room-badge">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+<span id="badge-room-text">Room 12A</span>
+</span>
+</section>
+<!-- END: ReportHeader -->
+<!-- Room Type Alert Information Banner -->
+<div class="bg-blue-50/70 border border-blue-200/80 rounded-xl px-3.5 py-2.5 flex items-start gap-2.5 text-xs text-blue-900" id="room-type-notice">
+<svg class="w-4 h-4 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<div class="leading-relaxed">
+<span class="font-bold" id="notice-room-title">Room 12A &bull; Superior AC</span>:
+    <span id="notice-room-desc">Daftar kendala disesuaikan untuk tipe dengan pendingin AC &amp; kamar mandi pribadi di dalam kamar.</span>
+</div>
+</div>
+<!-- BEGIN: IssueSelectionSection -->
+<section aria-label="Pilih Kendala" data-purpose="issue-selection">
+<div class="flex items-center justify-between mb-3">
+<h3 class="text-[11px] font-semibold tracking-wider text-slate-500 uppercase">PILIH KENDALA (MULTI-PILIHAN)</h3>
+<span class="bg-emerald-800 text-white text-[11px] font-semibold px-2.5 py-0.5 rounded-full" id="selected-count-badge">0 Dipilih</span>
+</div>
+<div class="flex flex-col gap-5">
+<!-- Kategori 1: Kamar Tidur -->
+<div>
+<div class="flex items-center justify-between mb-2.5">
+<h4 class="text-xs font-bold text-slate-800">Kamar Tidur</h4>
+<span class="text-[10px] text-slate-400 font-medium">Area Utama</span>
+</div>
+<div class="grid grid-cols-2 gap-3" id="bedroom-issues-grid">
+<!-- Lampu Mati -->
+<button aria-pressed="false" class="issue-card text-left border rounded-2xl p-3.5 flex flex-col justify-between gap-4 transition-all active:scale-[0.98] bg-white border-slate-200 shadow-sm" data-issue="Lampu Mati" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-white border border-blue-100 flex items-center justify-center text-slate-700 shadow-sm">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<span class="status-indicator w-5 h-5 rounded-full flex items-center justify-center bg-blue-100/70"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Lampu Mati</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Bohlam padam / redup</p>
+</div>
+</button>
+<!-- AC Tidak Dingin -->
+<button aria-pressed="false" class="issue-card text-left border rounded-2xl p-3.5 flex flex-col justify-between gap-4 transition-all active:scale-[0.98] bg-white border-slate-200 shadow-sm" data-issue="AC Tidak Dingin" data-issue-tag="ac" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-white border border-blue-100 flex items-center justify-center text-slate-700 shadow-sm">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v18m0-18l-2.5 2.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12h18M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<span class="status-indicator w-5 h-5 rounded-full flex items-center justify-center bg-blue-100/70"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">AC Tidak Dingin</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Hanya angin / mati total</p>
+</div>
+</button>
+<!-- Kipas Angin / Fan Rusak (HANYA muncul bila kamar bertipe Superior Fan) -->
+<button aria-pressed="false" class="issue-card hidden text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Kipas Angin / Fan Rusak" data-issue-tag="fan" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v20m0-10l7.071 7.071M12 12L4.929 4.929M12 12l7.071-7.071M12 12L4.929 19.071M12 12a3 3 0 100-6 3 3 0 000 6z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<div class="flex items-center gap-1">
+<p class="text-sm font-bold text-slate-900">Kipas Fan Rusak</p>
+<span class="text-[9px] bg-amber-100 text-amber-800 font-semibold px-1 rounded">Fan</span>
+</div>
+<p class="text-[11px] text-slate-500 mt-0.5">Baling macet / bising</p>
+</div>
+</button>
+<!-- TV Tidak Ada Channel -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="TV Tanpa Sinyal" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">TV Tanpa Sinyal</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Layar semut / no signal</p>
+</div>
+</button>
+<!-- Remot AC Tidak Berfungsi -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Remot AC Mati" data-issue-tag="ac" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Remot AC Mati</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Layar blank / baterai</p>
+</div>
+</button>
+<!-- Remot TV Mati -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Remot TV Mati" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect height="18" rx="2" width="8" x="8" y="3"></rect><path d="M12 7h.01M10 11h4M10 15h4" stroke-linecap="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Remot TV Mati</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Baterai habis / tombol macet</p>
+</div>
+</button>
+<!-- Sprei Kotor -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Sprei Kotor" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 7v11m0-4h18m0-7v11M3 10h18M7 10V7a2 2 0 012-2h6a2 2 0 012 2v3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Sprei Kotor</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Perlu diganti baru</p>
+</div>
+</button>
+<!-- Bantal / Selimut Kotor -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Bantal / Selimut Kotor" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 8c4 1 6 3 9 3s5-2 9-3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M4 14c4 0 6 2 10 2s4-1 6-1" stroke-linecap="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Bantal / Selimut Kotor</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Ada noda / ganti baru</p>
+</div>
+</button>
+</div>
+</div>
+<!-- Kategori 2: Kamar Mandi -->
+<div id="bathroom-issues-section">
+<div class="flex items-center justify-between mb-2.5">
+<h4 class="text-xs font-bold text-slate-800" id="bathroom-section-title">Kamar Mandi (Pribadi / Dalam)</h4>
+<span class="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full" id="bathroom-type-tag">Private Bathroom</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- Handuk Kotor -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Handuk Kotor" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 3h12a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5 17h14M8 21v-4m8 4v-4" stroke-linecap="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Handuk Kotor</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Minta handuk baru / bersih</p>
+</div>
+</button>
+<!-- Exhaust Tidak Nyala -->
+<button aria-pressed="false" class="issue-card text-left border rounded-2xl p-3.5 flex flex-col justify-between gap-4 transition-all active:scale-[0.98] bg-white border-slate-200 shadow-sm" data-issue="Exhaust Tidak Nyala" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 12c-2.5-2.5-2.5-4 0-4s2.5 1.5 0 4zm0 0c2.5-2.5 4-2.5 4 0s-1.5 2.5-4 0zm0 0c2.5 2.5 2.5 4 0 4s-2.5-1.5 0-4zm0 0c-2.5 2.5-4 2.5-4 0s1.5-2.5 4 0z" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full flex items-center justify-center bg-blue-100/70"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Exhaust Tidak Nyala</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Blower kamar mandi mati</p>
+</div>
+</button>
+<!-- Kamar Mandi Kotor -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Kamar Mandi Kotor" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 12v3a6 6 0 0012 0v-3H4zm14 0h2a1 1 0 001-1V9a1 1 0 00-1-1h-2v4zM7 8V4a1 1 0 011-1h2a1 1 0 011 1v4" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Kamar Mandi Kotor</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Perlu pembersihan cepat</p>
+</div>
+</button>
+<!-- Shower Bocor / Rusak -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98]" data-issue="Shower Bocor / Rusak" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h7a4 4 0 014 4v2m-7 0h10l-2 5H6l-2-5zm2 9v1m4-1v2m4-2v1" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Shower Bocor / Rusak</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Air menetes / mampet</p>
+</div>
+</button>
+<!-- Toilet Mampet -->
+<button aria-pressed="false" class="issue-card text-left bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between gap-4 shadow-sm transition-all active:scale-[0.98] col-span-2" data-issue="Toilet Mampet" type="button">
+<div class="flex items-start justify-between w-full">
+<div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 11h14v2a5 5 0 01-5 5h-4a5 5 0 01-5-5v-2zm2-7h10v4H7V4zm5 14v3m-3 0h6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+<span class="status-indicator w-5 h-5 rounded-full bg-blue-100/70 flex items-center justify-center"></span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900">Toilet Mampet / Air Meluap</p>
+<p class="text-[11px] text-slate-500 mt-0.5">Saluran pembuangan air tersumbat</p>
+</div>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- END: IssueSelectionSection -->
+<!-- BEGIN: SubmitSection -->
+<section class="flex flex-col items-center gap-3 mt-1" data-purpose="submit-actions">
+<!-- Selection Summary Text -->
+<div class="flex flex-col items-center gap-1">
+<p class="text-xs text-slate-600 flex items-center gap-1.5 text-center">
+<svg class="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span id="summary-text">0 kendala dipilih untuk Room 12A (Superior AC)</span>
+</p>
+</div>
+<!-- Primary Submit Button -->
+<button class="w-full bg-sky-500 hover:bg-sky-600 active:scale-[0.98] text-white font-semibold text-sm py-4 px-6 rounded-2xl border border-transparent shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer" id="submit-report-btn" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+<span id="submit-btn-label">Kirim Laporan</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+</button>
+</section>
+<!-- END: SubmitSection -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: Room Selector Modal / Bottom Sheet -->
+<div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-200 opacity-0 pointer-events-none" id="room-selection-modal">
+<div class="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl max-h-[85vh] flex flex-col shadow-2xl transform sm:translate-y-0 transition-transform duration-200 translate-y-full" id="room-modal-card">
+<!-- Modal Header -->
+<div class="px-5 pt-4 pb-3 border-b border-slate-100 flex items-center justify-between shrink-0">
+<div>
+<h3 class="text-base font-bold text-slate-900">Pilih Kamar</h3>
+<p class="text-xs text-slate-500">Pilih tipe dan nomor kamar Anda (18 Unit)</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors" id="close-room-modal-btn" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Filter Pills -->
+<div class="px-5 py-2.5 border-b border-slate-100/80 shrink-0">
+<div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs" id="modal-category-tabs">
+<button class="modal-category-pill active shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-slate-900 text-white transition-all" data-cat="all" type="button">Semua Tipe</button>
+<button class="modal-category-pill shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-blue-100 text-blue-700 hover:bg-blue-100 transition-all border border-blue-200" data-cat="superior_ac" type="button">Superior AC</button>
+<button class="modal-category-pill shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-pink-100 text-pink-700 hover:border-pink-400 transition-all border border-pink-200" data-cat="superior_fan" type="button">Superior Fan</button>
+<button class="modal-category-pill shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-amber-100 text-amber-800 hover:bg-amber-100 transition-all border border-amber-200" data-cat="standard_ac" type="button">Standard AC</button>
+<button class="modal-category-pill shrink-0 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-purple-100 text-purple-700 hover:bg-purple-100 transition-all border border-purple-200" data-cat="family_3" type="button">Family 3</button>
+</div>
+</div>
+<!-- Room Groups Container (Scrollable) -->
+<div class="px-5 py-4 overflow-y-auto space-y-3.5 flex-1" id="modal-room-groups">
+<!-- Group 1: Superior AC -->
+<div class="modal-room-group border border-blue-200 rounded-2xl p-3 bg-blue-50/30" data-category="superior_ac">
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
+<span class="text-xs font-bold text-slate-800">Superior AC</span>
+<span class="text-[9px] bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded border border-blue-200">Km. Dalam</span>
+</div>
+<span class="text-[11px] text-slate-400 font-medium">10 Kamar</span>
+</div>
+<div class="grid grid-cols-5 gap-1.5">
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 01" data-type="superior_ac" type="button">01</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 02" data-type="superior_ac" type="button">02</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 04" data-type="superior_ac" type="button">04</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 10" data-type="superior_ac" type="button">10</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 11" data-type="superior_ac" type="button">11</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border-2 border-emerald-600 bg-emerald-50 text-emerald-800 shadow-sm active:scale-95 transition-all" data-room="Room 12A" data-type="superior_ac" type="button">12A</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 14" data-type="superior_ac" type="button">14</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 16" data-type="superior_ac" type="button">16</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 17" data-type="superior_ac" type="button">17</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-blue-400 active:scale-95 transition-all" data-room="Room 18" data-type="superior_ac" type="button">18</button>
+</div>
+</div>
+<!-- Group 2: Superior Fan -->
+<div class="modal-room-group border border-pink-200 rounded-2xl p-3 bg-pink-50/30" data-category="superior_fan">
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span>
+<span class="text-xs font-bold text-slate-800">Superior Fan</span>
+<span class="text-[9px] bg-pink-100 text-pink-700 font-semibold px-2 py-0.5 rounded border border-pink-200">Km. Dalam &bull; Fan</span>
+</div>
+<span class="text-[11px] text-slate-400 font-medium">2 Kamar</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<button class="room-btn py-2.5 px-3 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-pink-400 active:scale-95 transition-all" data-room="Room 03" data-type="superior_fan" type="button">Room 03</button>
+<button class="room-btn py-2.5 px-3 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-pink-400 active:scale-95 transition-all" data-room="Room 05" data-type="superior_fan" type="button">Room 05</button>
+</div>
+</div>
+<!-- Group 3: Standard AC -->
+<div class="modal-room-group border border-amber-200 rounded-2xl p-3 bg-amber-50/30" data-category="standard_ac">
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+<span class="text-xs font-bold text-slate-800">Standard AC</span>
+<span class="text-[9px] bg-amber-100 text-amber-800 font-semibold px-2 py-0.5 rounded border border-amber-200">Km. Mandi Luar (Shared)</span>
+</div>
+<span class="text-[11px] text-slate-400 font-medium">5 Kamar</span>
+</div>
+<div class="grid grid-cols-5 gap-1.5">
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-amber-400 active:scale-95 transition-all" data-room="Room 06" data-type="standard_ac" type="button">06</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-amber-400 active:scale-95 transition-all" data-room="Room 07" data-type="standard_ac" type="button">07</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-amber-400 active:scale-95 transition-all" data-room="Room 08" data-type="standard_ac" type="button">08</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-amber-400 active:scale-95 transition-all" data-room="Room 09" data-type="standard_ac" type="button">09</button>
+<button class="room-btn py-2 px-1 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-amber-400 active:scale-95 transition-all" data-room="Room 12B" data-type="standard_ac" type="button">12B</button>
+</div>
+</div>
+<!-- Group 4: Family 3 -->
+<div class="modal-room-group border border-purple-200 rounded-2xl p-3 bg-purple-50/30" data-category="family_3">
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+<span class="text-xs font-bold text-slate-800">Family 3</span>
+<span class="text-[9px] bg-purple-100 text-purple-700 font-semibold px-2 py-0.5 rounded border border-purple-200">Keluarga</span>
+</div>
+<span class="text-[11px] text-slate-400 font-medium">1 Kamar</span>
+</div>
+<div>
+<button class="room-btn w-full py-2.5 px-3 rounded-xl text-xs font-semibold text-center border border-slate-200 bg-white text-slate-700 hover:border-purple-400 active:scale-95 transition-all" data-room="Room 15" data-type="family_3" type="button">Room 15 (Family 3)</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Room Selector Modal -->
+
+<!-- BEGIN: Interactive Success Modal -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300 opacity-0 pointer-events-none" id="success-modal">
+<div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 flex flex-col items-center text-center relative overflow-hidden transition-all duration-300 transform scale-95" id="success-modal-card">
+<!-- Background glow -->
+<div class="absolute -top-16 -right-16 w-36 h-36 bg-emerald-100/70 rounded-full blur-2xl pointer-events-none"></div>
+<div class="absolute -top-16 -left-16 w-36 h-36 bg-sky-100/70 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Animated Success Icon -->
+<div class="relative w-20 h-20 mb-4 flex items-center justify-center">
+<div class="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping opacity-75"></div>
+<div class="w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 to-sky-400 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 relative z-10">
+<svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+<path class="animate-check" d="M5 13l4 4L19 7"></path>
+</svg>
+</div>
+</div>
+<!-- Title -->
+<h3 class="text-lg font-extrabold text-slate-900 tracking-tight">Laporan Berhasil Terkirim!</h3>
+<!-- Message -->
+<p class="text-xs text-slate-600 mt-2 leading-relaxed">
+      Kami mohon maaf atas ketidaknyamanan yang Anda alami.
+    </p>
+<!-- Room Summary -->
+<div class="w-full bg-slate-50 border border-slate-200/80 rounded-2xl p-3 my-4 flex items-center justify-between text-left">
+<div class="min-w-0">
+<p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Lokasi Kamar</p>
+<p class="text-xs font-bold text-slate-800 truncate" id="success-room-info">Room 12A &bull; Superior AC</p>
+</div>
+<span class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        Diproses Segera
+      </span>
+</div>
+<!-- Ticket Code -->
+<div class="w-full bg-sky-50 border border-sky-100 rounded-xl px-3 py-2 text-[11px] text-blue-900 text-left mb-3 flex items-center gap-2">
+<svg class="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<div>
+<span class="font-medium">Nomor Tiket:</span>
+<span class="font-bold text-sky-950 ml-1" id="success-ticket-code">-</span>
+</div>
+</div>
+<!-- Issues List -->
+<div class="w-full bg-blue-50/60 border border-blue-100 rounded-xl px-3 py-2 text-[11px] text-blue-900 text-left mb-4 flex items-start gap-2">
+<svg class="w-4 h-4 text-sky-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<div class="flex-1 truncate">
+<span class="font-medium">Kendala dilaporkan:</span>
+<span class="font-bold text-sky-950 block truncate" id="success-issues-list">-</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full flex flex-col gap-2">
+<button class="w-full bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white text-xs font-bold py-3.5 px-4 rounded-xl shadow-md transition-all cursor-pointer" id="close-success-btn" type="button">
+        Tutup &amp; Selesai
+      </button>
+</div>
+</div>
+</div>
+<!-- END: Interactive Success Modal -->
+
+<!-- BEGIN: Toast Notification -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] opacity-0 pointer-events-none transition-all duration-300 max-w-[90vw]" id="toast-notification">
+<div class="bg-slate-800 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 text-xs font-medium">
+<span class="text-emerald-400 text-base" id="toast-icon">✓</span>
+<span id="toast-message">Laporan berhasil terkirim</span>
+</div>
+</div>
+<!-- END: Toast Notification -->
+
+<!-- BEGIN: Footer -->
+<footer class="pb-6 pt-2 text-center">
+<a class="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-600 transition-colors" href="#admin-qr">
+<span>Mode Cetak QR Room 1-18 (/admin-qr)</span>
+<svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</footer>
+<!-- END: Footer -->
+
+<script data-purpose="room-and-issue-interactivity">
+  (function () {
+    'use strict';
+
+    // ======================================================
+    // CONFIG - Google Apps Script URL
+    // ======================================================
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxoWIVq9IEfJwdzL87Lb3-UBKPxg_mzPeqynzPrUDaUOvkT-zX6OQVwDBvvffbQE6fqrw/exec';
+
+    // ======================================================
+    // STATE
+    // ======================================================
+    let currentRoom = 'Room 12A';
+    let currentType = 'superior_ac';
+    let currentTypeLabel = 'Superior AC';
+
+    const roomDetails = {
+      superior_ac: {
+        name: 'Superior AC',
+        badge: 'Superior AC',
+        desc: 'Kamar Mandi di Dalam',
+        notice: 'Daftar kendala disesuaikan untuk tipe dengan pendingin AC & kamar mandi pribadi di dalam kamar.',
+        bathroomTitle: 'Kamar Mandi (Pribadi / Dalam)',
+        bathroomTag: 'Private Bathroom',
+        hasBathroom: true
+      },
+      superior_fan: {
+        name: 'Superior Fan',
+        badge: 'Superior Fan',
+        desc: 'Kamar Mandi di Dalam • Fan',
+        notice: 'Kamar ini berfasilitas Kipas Angin (Fan) & kamar mandi dalam. Opsi komplain Kipas Angin diaktifkan khusus tipe ini.',
+        bathroomTitle: 'Kamar Mandi (Pribadi / Dalam)',
+        bathroomTag: 'Private Bathroom',
+        hasBathroom: true
+      },
+      standard_ac: {
+        name: 'Standard AC',
+        badge: 'Standard AC',
+        desc: 'Kamar Mandi di Luar (Shared)',
+        notice: 'Kamar tipe Standard AC menggunakan kamar mandi luar (shared). Opsi komplain kamar mandi disembunyikan.',
+        bathroomTitle: 'Kamar Mandi Luar (Shared)',
+        bathroomTag: 'Shared Bathroom',
+        hasBathroom: false
+      },
+      family_3: {
+        name: 'Family 3 Bed',
+        badge: 'Family 3',
+        desc: 'Keluarga • 3 Tempat Tidur',
+        notice: 'Kamar Family dengan 3 bed. Disediakan opsi laporan spesifik untuk kendala kasur tambahan keluarga & AC.',
+        bathroomTitle: 'Kamar Mandi (Keluarga / Dalam)',
+        bathroomTag: 'Family Bathroom',
+        hasBathroom: true
+      }
+    };
+
+    // ======================================================
+    // DOM ELEMENTS
+    // ======================================================
+    const headerActiveRoom     = document.getElementById('header-active-room');
+    const headerRoomTypeBadge  = document.getElementById('header-room-type-badge');
+    const headerRoomDesc       = document.getElementById('header-room-desc');
+    const badgeRoomText        = document.getElementById('badge-room-text');
+    const noticeRoomTitle      = document.getElementById('notice-room-title');
+    const noticeRoomDesc       = document.getElementById('notice-room-desc');
+    const bathroomIssuesSection= document.getElementById('bathroom-issues-section');
+    const bathroomSectionTitle = document.getElementById('bathroom-section-title');
+    const bathroomTypeTag      = document.getElementById('bathroom-type-tag');
+    const selectedCountBadge   = document.getElementById('selected-count-badge');
+    const summaryText          = document.getElementById('summary-text');
+    const roomButtons          = document.querySelectorAll('.room-btn');
+    const issueCards           = document.querySelectorAll('.issue-card');
+
+    // Modal
+    const roomModal         = document.getElementById('room-selection-modal');
+    const roomModalCard     = document.getElementById('room-modal-card');
+    const openModalBtn      = document.getElementById('open-room-modal-btn');
+    const closeModalBtn     = document.getElementById('close-room-modal-btn');
+    const modalCategoryTabs = document.querySelectorAll('.modal-category-pill');
+    const modalRoomGroups   = document.querySelectorAll('.modal-room-group');
+
+    // Success Modal
+    const successModal     = document.getElementById('success-modal');
+    const successModalCard = document.getElementById('success-modal-card');
+    const submitReportBtn  = document.getElementById('submit-report-btn');
+    const closeSuccessBtn  = document.getElementById('close-success-btn');
+    const successRoomInfo  = document.getElementById('success-room-info');
+    const successIssuesList= document.getElementById('success-issues-list');
+    const successTicketCode= document.getElementById('success-ticket-code');
+
+    // Toast
+    const toastEl      = document.getElementById('toast-notification');
+    const toastMessage = document.getElementById('toast-message');
+    const toastIcon    = document.getElementById('toast-icon');
+
+    // Submit button inner elements
+    const submitBtnLabel = document.getElementById('submit-btn-label');
+
+    // ======================================================
+    // TOAST
+    // ======================================================
+    let toastTimer;
+    function showToast(msg, isError = false) {
+      clearTimeout(toastTimer);
+      toastMessage.textContent = msg;
+      toastIcon.textContent = isError ? '⚠️' : '✓';
+      toastEl.style.opacity = '1';
+      toastEl.style.pointerEvents = 'auto';
+      toastEl.style.transform = 'translateX(-50%) translateY(0)';
+      toastTimer = setTimeout(() => {
+        toastEl.style.opacity = '0';
+        toastEl.style.pointerEvents = 'none';
+      }, 3500);
+    }
+
+    // ======================================================
+    // ROOM MODAL
+    // ======================================================
+    function openRoomModal() {
+      roomModal.classList.remove('opacity-0', 'pointer-events-none');
+      roomModalCard.classList.remove('translate-y-full');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeRoomModal() {
+      roomModalCard.classList.add('translate-y-full');
+      roomModal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    if (openModalBtn) openModalBtn.addEventListener('click', openRoomModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeRoomModal);
+    if (roomModal) {
+      roomModal.addEventListener('click', (e) => {
+        if (e.target === roomModal) closeRoomModal();
+      });
+    }
+
+    // ======================================================
+    // ISSUE CARD HELPERS
+    // ======================================================
+    const checkIconSvg = `
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+    `;
+
+    function deselectCard(card) {
+      card.classList.remove('selected', 'bg-blue-50/80', 'border-blue-300');
+      card.classList.add('bg-white', 'border-slate-200', 'shadow-sm');
+      card.setAttribute('aria-pressed', 'false');
+      const indicator = card.querySelector('.status-indicator');
+      if (indicator) {
+        indicator.classList.remove('bg-emerald-700', 'text-white');
+        indicator.classList.add('bg-blue-100/70');
+        indicator.innerHTML = '';
+      }
+    }
+
+    function updateSummary() {
+      let count = 0;
+      issueCards.forEach(card => {
+        const isVisible = !card.classList.contains('hidden') && card.offsetParent !== null;
+        if (isVisible && card.classList.contains('selected')) count++;
+      });
+      badgeRoomText.textContent = currentRoom;
+      selectedCountBadge.textContent = `${count} Dipilih`;
+      summaryText.textContent = `${count} kendala dipilih untuk ${currentRoom} (${currentTypeLabel})`;
+    }
+
+    // ======================================================
+    // APPLY ROOM CHANGE
+    // ======================================================
+    function applyRoomChange(room, type) {
+      currentRoom = room;
+      currentType = type;
+      const info = roomDetails[type] || roomDetails.superior_ac;
+      currentTypeLabel = info.name;
+
+      headerActiveRoom.textContent = room;
+      headerRoomTypeBadge.textContent = info.badge;
+      headerRoomDesc.textContent = info.desc;
+      badgeRoomText.textContent = room;
+      noticeRoomTitle.textContent = `${room} • ${info.name}`;
+      noticeRoomDesc.textContent = info.notice;
+
+      // Update room button highlight
+      roomButtons.forEach(btn => {
+        if (btn.getAttribute('data-room') === room) {
+          btn.classList.add('border-2', 'border-emerald-600', 'bg-emerald-50', 'text-emerald-800', 'shadow-sm');
+          btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+        } else {
+          btn.classList.remove('border-2', 'border-emerald-600', 'bg-emerald-50', 'text-emerald-800', 'shadow-sm');
+          btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+        }
+      });
+
+      // Show/hide issue cards based on type tag
+      issueCards.forEach(card => {
+        const tag = card.getAttribute('data-issue-tag');
+        if (tag === 'fan') {
+          if (type === 'superior_fan') card.classList.remove('hidden');
+          else { card.classList.add('hidden'); deselectCard(card); }
+        } else if (tag === 'ac') {
+          if (type === 'superior_fan') { card.classList.add('hidden'); deselectCard(card); }
+          else card.classList.remove('hidden');
+        } else if (tag === 'family') {
+          if (type === 'family_3') card.classList.remove('hidden');
+          else { card.classList.add('hidden'); deselectCard(card); }
+        }
+      });
+
+      // Show/hide bathroom section
+      if (bathroomIssuesSection) {
+        if (info.hasBathroom) {
+          bathroomIssuesSection.classList.remove('hidden');
+          bathroomSectionTitle.textContent = info.bathroomTitle;
+          bathroomTypeTag.textContent = info.bathroomTag;
+        } else {
+          bathroomIssuesSection.classList.add('hidden');
+          bathroomIssuesSection.querySelectorAll('.issue-card').forEach(deselectCard);
+        }
+      }
+
+      updateSummary();
+    }
+
+    // Room button click
+    roomButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        applyRoomChange(btn.getAttribute('data-room'), btn.getAttribute('data-type'));
+        closeRoomModal();
+      });
+    });
+
+    // Category filter pills
+    modalCategoryTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        modalCategoryTabs.forEach(t => {
+          t.classList.remove('bg-slate-900', 'text-white', 'active');
+          t.classList.add('bg-slate-100', 'text-slate-600');
+        });
+        tab.classList.add('bg-slate-900', 'text-white', 'active');
+        tab.classList.remove('bg-slate-100', 'text-slate-600');
+        const cat = tab.getAttribute('data-cat');
+        modalRoomGroups.forEach(box => {
+          box.style.display = (cat === 'all' || box.getAttribute('data-category') === cat) ? 'block' : 'none';
+        });
+      });
+    });
+
+    // Toggle issue cards
+    issueCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const isSelected = card.classList.toggle('selected');
+        card.setAttribute('aria-pressed', String(isSelected));
+        const indicator = card.querySelector('.status-indicator');
+        if (isSelected) {
+          card.classList.remove('bg-white', 'border-slate-200', 'shadow-sm');
+          card.classList.add('bg-blue-50/80', 'border-blue-300');
+          if (indicator) {
+            indicator.classList.remove('bg-blue-100/70');
+            indicator.classList.add('bg-emerald-700', 'text-white');
+            indicator.innerHTML = checkIconSvg;
+          }
+        } else {
+          card.classList.remove('bg-blue-50/80', 'border-blue-300');
+          card.classList.add('bg-white', 'border-slate-200', 'shadow-sm');
+          if (indicator) {
+            indicator.classList.remove('bg-emerald-700', 'text-white');
+            indicator.classList.add('bg-blue-100/70');
+            indicator.innerHTML = '';
+          }
+        }
+        updateSummary();
+      });
+    });
+
+    // ======================================================
+    // GOOGLE APPS SCRIPT SUBMISSION
+    // ======================================================
+    async function sendToGoogleAppsScript(payload) {
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.warn('GAS POST note:', e);
+      }
+      try {
+        const qParams = new URLSearchParams({
+          ticket: payload.ticketCode || '',
+          room: payload.room || '',
+          issues: payload.issues || '',
+          urgency: payload.urgency || '',
+          timestamp: payload.timestamp || ''
+        });
+        await fetch(`${GOOGLE_SCRIPT_URL}?${qParams.toString()}`, { method: 'GET', mode: 'no-cors' });
+      } catch (e) {
+        console.warn('GAS GET note:', e);
+      }
+    }
+
+    async function sendToLocalBackend(payload) {
+      if (!window.location.protocol.startsWith('http')) return;
+      try {
+        await fetch('/api/complaints', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) { /* backend offline */ }
+    }
+
+    // ======================================================
+    // SUCCESS MODAL
+    // ======================================================
+    function openSuccessModal(payload) {
+      if (successRoomInfo) successRoomInfo.textContent = `${currentRoom} • ${currentTypeLabel}`;
+      if (successIssuesList) successIssuesList.textContent = payload.issues || 'Pemeriksaan umum kamar';
+      if (successTicketCode) successTicketCode.textContent = payload.ticketCode || '-';
+
+      // Re-trigger checkmark animation
+      const checkPath = successModal.querySelector('.animate-check');
+      if (checkPath) {
+        checkPath.style.animation = 'none';
+        void checkPath.offsetWidth;
+        checkPath.style.animation = 'checkmarkStroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.15s forwards';
+      }
+
+      successModal.classList.remove('opacity-0', 'pointer-events-none');
+      successModalCard.classList.remove('scale-95');
+      successModalCard.classList.add('animate-modal-pop');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeSuccessModal() {
+      successModalCard.classList.remove('animate-modal-pop');
+      successModalCard.classList.add('scale-95');
+      successModal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.classList.remove('overflow-hidden');
+      issueCards.forEach(deselectCard);
+      updateSummary();
+    }
+
+    if (closeSuccessBtn) closeSuccessBtn.addEventListener('click', closeSuccessModal);
+    if (successModal) {
+      successModal.addEventListener('click', (e) => { if (e.target === successModal) closeSuccessModal(); });
+    }
+
+    // ======================================================
+    // SUBMIT REPORT
+    // ======================================================
+    async function submitReport() {
+      const selectedIssues = [];
+      issueCards.forEach(card => {
+        const isVisible = !card.classList.contains('hidden') && card.offsetParent !== null;
+        if (isVisible && card.classList.contains('selected')) {
+          selectedIssues.push(card.getAttribute('data-issue'));
+        }
+      });
+
+      if (selectedIssues.length === 0) {
+        showToast('⚠️ Pilih minimal 1 kendala untuk dilaporkan.', true);
+        return;
+      }
+
+      // Set button loading state
+      submitReportBtn.disabled = true;
+      submitBtnLabel.textContent = 'Mengirim...';
+
+      const now = new Date();
+      const ticketCode = `GS-${now.getFullYear().toString().slice(-2)}${String(now.getMonth() + 1).padStart(2, '0')}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+      const payload = {
+        ticketCode,
+        room: currentRoom,
+        type: currentType,
+        category: selectedIssues.join(', '),
+        issues: selectedIssues.join(', '),
+        description: `Laporan ${currentRoom} (${currentTypeLabel}): ${selectedIssues.join(', ')}`,
+        urgency: selectedIssues.some(i => i.includes('AC') || i.includes('Toilet')) ? 'Mendesak' : 'Normal',
+        preferredTime: 'Segera',
+        status: 'Baru',
+        timestamp: now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
+      };
+
+      // Fire-and-forget to Google Apps Script & local backend
+      sendToGoogleAppsScript(payload);
+      sendToLocalBackend(payload);
+
+      // Persist to localStorage
+      try {
+        const logs = JSON.parse(localStorage.getItem('room_service_complaints') || '[]');
+        logs.push(payload);
+        localStorage.setItem('room_service_complaints', JSON.stringify(logs));
+        localStorage.setItem('grandstay_last_ticket', ticketCode);
+      } catch (e) { /* storage unavailable */ }
+
+      // Show success modal after short delay
+      setTimeout(() => {
+        submitReportBtn.disabled = false;
+        submitBtnLabel.textContent = 'Kirim Laporan';
+        openSuccessModal(payload);
+      }, 700);
+    }
+
+    if (submitReportBtn) submitReportBtn.addEventListener('click', submitReport);
+
+    // ======================================================
+    // KEYBOARD ESCAPE
+    // ======================================================
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (successModal && !successModal.classList.contains('opacity-0')) closeSuccessModal();
+        if (roomModal && !roomModal.classList.contains('opacity-0')) closeRoomModal();
+      }
+    });
+
+    // ======================================================
+    // INIT
+    // ======================================================
+    applyRoomChange('Room 12A', 'superior_ac');
+
+  })();
+</script>
+</body></html>

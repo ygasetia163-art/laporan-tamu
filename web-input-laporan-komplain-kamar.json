@@ -1,0 +1,102 @@
+{
+  "hotel": {
+    "name": "Room Service - Grand Stay",
+    "serviceName": "Lapor Komplain Kamar",
+    "hotline": "+62 21 555-8899",
+    "whatsapp": "6281234567890",
+    "operatingHours": "24 Jam Non-Stop",
+    "version": "1.0.0"
+  },
+  "defaults": {
+    "currentRoom": 12,
+    "selectedIssues": [
+      "lampu_mati",
+      "ac_panas"
+    ]
+  },
+  "rooms": [
+    { "number": 1, "floor": 1, "label": "Kamar 01", "type": "Deluxe Room", "status": "occupied" },
+    { "number": 2, "floor": 1, "label": "Kamar 02", "type": "Deluxe Room", "status": "occupied" },
+    { "number": 3, "floor": 1, "label": "Kamar 03", "type": "Standard Room", "status": "vacant" },
+    { "number": 4, "floor": 1, "label": "Kamar 04", "type": "Standard Room", "status": "occupied" },
+    { "number": 5, "floor": 1, "label": "Kamar 05", "type": "Suite Room", "status": "occupied" },
+    { "number": 6, "floor": 1, "label": "Kamar 06", "type": "Standard Room", "status": "occupied" },
+    { "number": 7, "floor": 1, "label": "Kamar 07", "type": "Deluxe Room", "status": "vacant" },
+    { "number": 8, "floor": 1, "label": "Kamar 08", "type": "Deluxe Room", "status": "occupied" },
+    { "number": 9, "floor": 1, "label": "Kamar 09", "type": "Suite Room", "status": "occupied" },
+    { "number": 10, "floor": 2, "label": "Kamar 10", "type": "Executive Suite", "status": "occupied" },
+    { "number": 11, "floor": 2, "label": "Kamar 11", "type": "Deluxe Room", "status": "vacant" },
+    { "number": 12, "floor": 2, "label": "Kamar 12", "type": "Executive Suite", "status": "active" },
+    { "number": 13, "floor": 2, "label": "Kamar 13", "type": "Standard Room", "status": "occupied" },
+    { "number": 14, "floor": 2, "label": "Kamar 14", "type": "Standard Room", "status": "occupied" },
+    { "number": 15, "floor": 2, "label": "Kamar 15", "type": "Deluxe Room", "status": "vacant" },
+    { "number": 16, "floor": 2, "label": "Kamar 16", "type": "Deluxe Room", "status": "occupied" },
+    { "number": 17, "floor": 2, "label": "Kamar 17", "type": "Suite Room", "status": "occupied" },
+    { "number": 18, "floor": 2, "label": "Kamar 18", "type": "Presidential Suite", "status": "occupied" }
+  ],
+  "issues": [
+    {
+      "id": "lampu_mati",
+      "name": "Lampu Mati",
+      "description": "Bohlam padam / toilet",
+      "icon": "lightbulb",
+      "department": "Engineering",
+      "urgency": "normal",
+      "colspan": 1
+    },
+    {
+      "id": "ac_panas",
+      "name": "AC Tidak Dingin",
+      "description": "Hanya angin / panas",
+      "icon": "ac_unit",
+      "department": "Engineering",
+      "urgency": "urgent",
+      "colspan": 1
+    },
+    {
+      "id": "tv_no_signal",
+      "name": "TV Tidak Ada Channel",
+      "description": "Layar semut / no signal",
+      "icon": "tv",
+      "department": "Engineering",
+      "urgency": "normal",
+      "colspan": 1
+    },
+    {
+      "id": "remote_tv",
+      "name": "Remot TV Mati",
+      "description": "Baterai habis / macet",
+      "icon": "settings_remote",
+      "department": "Engineering",
+      "urgency": "normal",
+      "colspan": 1
+    },
+    {
+      "id": "remote_ac",
+      "name": "Remot AC Tidak Berfungsi",
+      "description": "Layar blank / tak respon",
+      "icon": "sensors",
+      "department": "Engineering",
+      "urgency": "normal",
+      "colspan": 2
+    }
+  ],
+  "sampleReports": [
+    {
+      "ticketCode": "GS-2611-101",
+      "room": 12,
+      "issues": ["lampu_mati", "ac_panas"],
+      "status": "Diproses",
+      "assignedStaff": "Budi Santoso (Teknisi)",
+      "createdAt": "2026-11-24T14:10:00Z"
+    },
+    {
+      "ticketCode": "GS-2611-098",
+      "room": 5,
+      "issues": ["remote_tv"],
+      "status": "Selesai",
+      "assignedStaff": "Rian (Engineering)",
+      "createdAt": "2026-11-24T11:30:00Z"
+    }
+  ]
+}
